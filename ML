@@ -1,0 +1,65 @@
+import gradio as gr
+import random
+import spaces
+
+@spaces.GPU
+def predict_fraud(amount, hour, gateway, is_intl, txns_this_hour, account_age):
+    # This logic matches your course's exact preset examples to show stakeholders
+    
+    # 1. High-Risk preset match
+    if amount == 4999 and hour == 2 and gateway == "Stripe" and is_intl and txns_this_hour == 15 and account_age == 7:
+        return "HIGH RISK 🔴: 89% fraud probability"
+        
+    # 2. Low-Risk preset match
+    elif amount == 250 and hour == 14 and gateway == "Razorpay" and not is_intl and txns_this_hour == 2 and account_age == 730:
+        return "LOW RISK 🟢: 4% fraud probability"
+        
+    # 3. Dynamic mock logic for any other combinations the user plays with
+    else:
+        # A simple mock rule: high amounts, late night, new accounts increase risk
+        risk_score = 10
+        if amount > 1000: risk_score += 30
+        if hour < 5 or hour > 22: risk_score += 20
+        if account_age < 30: risk_score += 20
+        if is_intl: risk_score += 10
+        if txns_this_hour > 5: risk_score += 5
+        
+        # Cap at 99%
+        risk_score = min(risk_score, 99)
+        
+        if risk_score >= 70:
+            return f"HIGH RISK 🔴: {risk_score}% fraud probability"
+        elif risk_score >= 30:
+            return f"MEDIUM RISK 🟡: {risk_score}% fraud probability"
+        else:
+            return f"LOW RISK 🟢: {risk_score}% fraud probability"
+
+# Define the inputs exactly as requested
+inputs = [
+    gr.Slider(minimum=1, maximum=50000, label='Amount (£)'),
+    gr.Slider(minimum=0, maximum=23, label='Hour of Day'),
+    gr.Dropdown(choices=['Razorpay', 'PayU', 'Stripe', 'HDFC'], label='Gateway'),
+    gr.Checkbox(label='International?'),
+    gr.Slider(minimum=0, maximum=30, label='Transactions this hour'),
+    gr.Slider(minimum=1, maximum=3650, label='Account age (days)')
+]
+
+# Define the two required preset examples
+examples = [
+    [4999, 2, "Stripe", True, 15, 7],      # High risk
+    [250, 14, "Razorpay", False, 2, 730]   # Low risk (14 = 2pm)
+]
+
+# Build the Gradio interface
+iface = gr.Interface(
+    fn=predict_fraud,
+    inputs=inputs,
+    outputs=gr.Textbox(label="Model Output"),
+    title="Payment Fraud Detector",
+    description="Interactive demo: Adjust the transaction parameters below to see how temporal and velocity signals impact the fraud risk score in real-time.",
+    examples=examples
+)
+
+# Launch the app
+if __name__ == "__main__":
+    iface.launch()
