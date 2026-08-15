@@ -6,6 +6,8 @@
 
 An end-to-end NLP engineering framework designed to classify, interpret, and route payment complaints in modern financial technology pipelines.
 
+Try the live demo: https://huggingface.co/spaces/mitalidaduria/payment-fraud-detector
+
 This repository demonstrates the progressive evolution of domain-specific NLP systems—starting from low-latency, interpretable baselines (TF-IDF + Logistic Regression) and scaling toward fine-tuned Transformer models (DistilBERT), Retrieval-Augmented Generation (RAG), and autonomous LLM customer operations agents.
 
 ---
