@@ -1,0 +1,5 @@
+mlruns/
+notebooks/
+tests/
+.git/
+__pycache__/
